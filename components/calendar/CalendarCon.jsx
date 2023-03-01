@@ -34,6 +34,11 @@ function CalendarCon() {
     }
   };
 
+  const toSelectedMonth = (year, month) => {
+    setYear(year);
+    setMonth(month);
+  };
+
   return (
     <View style={styles.container}>
       <Header
@@ -46,8 +51,7 @@ function CalendarCon() {
         year={year}
         month={month}
         date={date}
-        prevMonth={prevMonth}
-        nextMonth={nextMonth}
+        toSelectedMonth={toSelectedMonth}
       />
     </View>
   );

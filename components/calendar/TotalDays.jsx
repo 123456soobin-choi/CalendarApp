@@ -1,14 +1,15 @@
 // 외부
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Pressable } from "react-native";
 import { v4 as uuidv4 } from "uuid";
 
-function TotalDays({ year, month, date }) {
+function TotalDays({ year, month, date, toSelectedMonth }) {
   const [totalDayDivide, setTotalDayDivide] = useState([]);
   const [week, setWeek] = useState(0);
   const [totalDays, setTotalDays] = useState({});
+  const today = new Date();
 
-  const [selectedDate, setSelectedDate] = useState({
+  const [selected, setSelected] = useState({
     state: "",
     year: 0,
     month: 0,
@@ -20,6 +21,7 @@ function TotalDays({ year, month, date }) {
     const previousMonthLastDay = new Date(year, month - 1, 0).getDay();
     const currentMonthLastDate = new Date(year, month, 0).getDate();
     const currentMonthLastDay = new Date(year, month, 0).getDay();
+    // 일요일 0부터 시작 토요일 6으로 끝남
 
     const previousDays = Array.from(
       { length: previousMonthLastDay + 1 },
@@ -53,9 +55,14 @@ function TotalDays({ year, month, date }) {
     return arr;
   }
 
-  function handleSelectDate(selectedDate) {
-    setSelectedDate(selectedDate);
-  }
+  const handleSelectDate = ({ year, month, date }) => {
+    setSelected({ state: "", year, month, date });
+  };
+
+  const handleToMonth = ({ year, month, date }) => {
+    setSelected({ state: "", year, month, date });
+    toSelectedMonth(year, month);
+  };
 
   useEffect(() => {
     getTotalDays(year, month);
@@ -71,25 +78,62 @@ function TotalDays({ year, month, date }) {
 
   return (
     <View style={styles.container}>
-      {totalDays?.prev?.map((el, idx) => (
+      {totalDays?.prev?.map((day, idx) => (
         <View style={styles.box}>
-          <Text style={styles.prev} key={idx}>
-            {el}
-          </Text>
+          <Pressable
+            onPress={() => handleToMonth({ year, month, date: day })}
+            style={
+              selected.date === day &&
+              selected.month === month &&
+              selected.year === year
+                ? styles.selectedDate
+                : null
+            }
+          >
+            <Text style={styles.prev} key={idx}>
+              {day}
+            </Text>
+          </Pressable>
         </View>
       ))}
-      {totalDays?.curr?.map((el, idx) => (
+      {totalDays?.curr?.map((day, idx) => (
         <View style={styles.box}>
-          <Text style={styles.curr} key={idx}>
-            {el}
-          </Text>
+          <Pressable
+            onPress={() => handleSelectDate({ year, month, date: day })}
+            style={[
+              selected.date === day &&
+              selected.month === month &&
+              selected.year === year
+                ? styles.selectedDate
+                : null,
+              // 오늘 날짜일 경우
+              //   today.toDateString() === date.toDateString()
+              //     ? styles.today
+              //     : null,
+            ]}
+          >
+            <Text style={styles.curr} key={idx}>
+              {day}
+            </Text>
+          </Pressable>
         </View>
       ))}
-      {totalDays?.next?.map((el, idx) => (
+      {totalDays?.next?.map((day, idx) => (
         <View style={styles.box}>
-          <Text style={styles.next} key={idx}>
-            {el}
-          </Text>
+          <Pressable
+            onPress={() => handleToMonth({ year, month, date: day })}
+            style={[
+              selected.date === day &&
+              selected.month === month &&
+              selected.year === year
+                ? styles.selectedDate
+                : null,
+            ]}
+          >
+            <Text style={styles.next} key={idx}>
+              {day}
+            </Text>
+          </Pressable>
         </View>
       ))}
     </View>
@@ -120,6 +164,19 @@ const styles = StyleSheet.create({
   curr: {
     color: "black",
     fontSize: 16,
+  },
+  selectedDate: {
+    width: 30,
+    height: 30,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  today: {
+    color: "#2196f3",
+    fontSize: 24,
   },
 });
 

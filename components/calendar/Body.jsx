@@ -6,11 +6,17 @@ import { StyleSheet, View, Text } from "react-native";
 import DayOfWeek from "./DayOfWeek";
 import TotalDays from "./TotalDays";
 
-function Body({ year, month, date }) {
+function Body({ year, month, date, today, toSelectedMonth }) {
   return (
     <View style={styles.container}>
       <DayOfWeek />
-      <TotalDays year={year} month={month} date={date} />
+      <TotalDays
+        year={year}
+        month={month}
+        date={date}
+        today={today}
+        toSelectedMonth={toSelectedMonth}
+      />
     </View>
   );
 }
@@ -18,8 +24,6 @@ function Body({ year, month, date }) {
 const styles = StyleSheet.create({
   container: {
     height: "100%",
-    // flexDirection: "row",
-    // backgroundColor: "yellow",
   },
 });
 
